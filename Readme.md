@@ -1,33 +1,31 @@
-# blurhash
+# blurhash-esm
 
-[![NPM Version](https://img.shields.io/npm/v/blurhash.svg?style=flat)](https://npmjs.org/package/blurhash)
-[![NPM Downloads](https://img.shields.io/npm/dm/blurhash.svg?style=flat)](https://npmjs.org/package/blurhash)
+[![NPM Version](https://img.shields.io/npm/v/blurhash-esm.svg?style=flat)](https://npmjs.org/package/blurhash-esm)
+[![NPM Downloads](https://img.shields.io/npm/dm/blurhash-esm.svg?style=flat)](https://npmjs.org/package/blurhash-esm)
 
-> JavaScript encoder and decoder for the [Wolt BlurHash](https://github.com/woltapp/blurhash) algorithm
+> Fork of the excellent [Wolt BlurHash](https://github.com/woltapp/blurhash) that exports ES Module. Because maintainers of the original haven't merged the [PR since summer 2020](https://github.com/woltapp/blurhash/pull/58).
 
 ## Install
 
 ```sh
-npm install --save blurhash
+npm install --save blurhash-esm
 ```
-
-See [react-blurhash](https://github.com/woltapp/react-blurhash) to use blurhash with React.
 
 ## API
 
-### `decode(blurhash: string, width: number, height: number, punch?: number) => Uint8ClampedArray`
+### `decode(blurhash-esm: string, width: number, height: number, punch?: number) => Uint8ClampedArray`
 
 > Decodes a blurhash string to pixels
 
 #### Example
 
 ```js
-import { decode } from "blurhash";
+import { decode } from 'blurhash-esm';
 
-const pixels = decode("LEHV6nWB2yk8pyo0adR*.7kCMdnj", 32, 32);
+const pixels = decode('LEHV6nWB2yk8pyo0adR*.7kCMdnj', 32, 32);
 
-const canvas = document.createElement("canvas");
-const ctx = canvas.getContext("2d");
+const canvas = document.createElement('canvas');
+const ctx = canvas.getContext('2d');
 const imageData = ctx.createImageData(width, height);
 imageData.data.set(pixels);
 ctx.putImageData(imageData, 0, 0);
@@ -39,7 +37,7 @@ document.body.append(canvas);
 > Encodes pixels to a blurhash string
 
 ```js
-import { encode } from "blurhash";
+import { encode } from 'blurhash-esm';
 
 const loadImage = async src =>
   new Promise((resolve, reject) => {
@@ -50,10 +48,10 @@ const loadImage = async src =>
   });
 
 const getImageData = image => {
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
   canvas.width = image.width;
   canvas.height = image.height;
-  const context = canvas.getContext("2d");
+  const context = canvas.getContext('2d');
   context.drawImage(image, 0, 0);
   return context.getImageData(0, 0, image.width, image.height);
 };
@@ -68,11 +66,11 @@ const encodeImageToBlurhash = async imageUrl => {
 ### `isBlurhashValid(blurhash: string) => { result: boolean; errorReason?: string }`
 
 ```js
-import { isBlurhashValid } from "blurhash";
+import { isBlurhashValid } from 'blurhash-esm';
 
-const validRes = isBlurhashValid("LEHV6nWB2yk8pyo0adR*.7kCMdnj");
+const validRes = isBlurhashValid('LEHV6nWB2yk8pyo0adR*.7kCMdnj');
 // { result: true }
 
-const invalidRes = isBlurhashValid("???");
-// { result: false, errorReason: "The blurhash string must be at least 6 characters" }
+const invalidRes = isBlurhashValid('???');
+// { result: false, errorReason: 'The blurhash string must be at least 6 characters' }
 ```
