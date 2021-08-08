@@ -1,17 +1,10 @@
-import { encode83 } from "./base83";
-import { sRGBToLinear, signPow, linearTosRGB } from "./utils";
-import { ValidationError } from "./error";
-
-type NumberTriplet = [number, number, number];
+import { encode83 } from './base83.js';
+import { sRGBToLinear, signPow, linearTosRGB } from './utils.js';
+import { ValidationError } from './error.js';
 
 const bytesPerPixel = 4;
 
-const multiplyBasisFunction = (
-  pixels: Uint8ClampedArray,
-  width: number,
-  height: number,
-  basisFunction: (i: number, j: number) => number
-): NumberTriplet => {
+const multiplyBasisFunction = (pixels, width, height, basisFunction) => {
   let r = 0;
   let g = 0;
   let b = 0;
@@ -34,14 +27,14 @@ const multiplyBasisFunction = (
   return [r * scale, g * scale, b * scale];
 };
 
-const encodeDC = (value: NumberTriplet): number => {
+const encodeDC = (value) => {
   const roundedR = linearTosRGB(value[0]);
   const roundedG = linearTosRGB(value[1]);
   const roundedB = linearTosRGB(value[2]);
   return (roundedR << 16) + (roundedG << 8) + roundedB;
 };
 
-const encodeAC = (value: NumberTriplet, maximumValue: number): number => {
+const encodeAC = (value, maximumValue) => {
   let quantR = Math.floor(
     Math.max(
       0,
@@ -64,21 +57,15 @@ const encodeAC = (value: NumberTriplet, maximumValue: number): number => {
   return quantR * 19 * 19 + quantG * 19 + quantB;
 };
 
-const encode = (
-  pixels: Uint8ClampedArray,
-  width: number,
-  height: number,
-  componentX: number,
-  componentY: number
-): string => {
+const encode = (pixels, width, height, componentX, componentY) => {
   if (componentX < 1 || componentX > 9 || componentY < 1 || componentY > 9) {
-    throw new ValidationError("BlurHash must have between 1 and 9 components");
+    throw new ValidationError('BlurHash must have between 1 and 9 components');
   }
   if (width * height * 4 !== pixels.length) {
-    throw new ValidationError("Width and height must match the pixels array");
+    throw new ValidationError('Width and height must match the pixels array');
   }
 
-  let factors: Array<[number, number, number]> = [];
+  let factors = [];
   for (let y = 0; y < componentY; y++) {
     for (let x = 0; x < componentX; x++) {
       const normalisation = x == 0 && y == 0 ? 1 : 2;
@@ -86,7 +73,7 @@ const encode = (
         pixels,
         width,
         height,
-        (i: number, j: number) =>
+        (i, j) =>
           normalisation *
           Math.cos((Math.PI * x * i) / width) *
           Math.cos((Math.PI * y * j) / height)
@@ -98,12 +85,12 @@ const encode = (
   const dc = factors[0];
   const ac = factors.slice(1);
 
-  let hash = "";
+  let hash = '';
 
   let sizeFlag = componentX - 1 + (componentY - 1) * 9;
   hash += encode83(sizeFlag, 1);
 
-  let maximumValue: number;
+  let maximumValue;
   if (ac.length > 0) {
     let actualMaximumValue = Math.max(...ac.map(val => Math.max(...val)));
     let quantisedMaximumValue = Math.floor(

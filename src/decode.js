@@ -1,15 +1,15 @@
-import { decode83 } from "./base83";
-import { sRGBToLinear, signPow, linearTosRGB } from "./utils";
-import { ValidationError } from "./error";
+import { decode83 } from './base83.js';
+import { sRGBToLinear, signPow, linearTosRGB } from './utils.js';
+import { ValidationError } from './error.js';
 
 /**
  * Returns an error message if invalid or undefined if valid
  * @param blurhash
  */
-const validateBlurhash = (blurhash: string) => {
+const validateBlurhash = (blurhash) => {
   if (!blurhash || blurhash.length < 6) {
     throw new ValidationError(
-      "The blurhash string must be at least 6 characters"
+      'The blurhash string must be at least 6 characters'
     );
   }
 
@@ -26,9 +26,7 @@ const validateBlurhash = (blurhash: string) => {
   }
 };
 
-export const isBlurhashValid = (
-  blurhash: string
-): { result: boolean; errorReason?: string } => {
+export const isBlurhashValid = (blurhash) => {
   try {
     validateBlurhash(blurhash);
   } catch (error) {
@@ -38,14 +36,14 @@ export const isBlurhashValid = (
   return { result: true };
 };
 
-const decodeDC = (value: number) => {
+const decodeDC = (value) => {
   const intR = value >> 16;
   const intG = (value >> 8) & 255;
   const intB = value & 255;
   return [sRGBToLinear(intR), sRGBToLinear(intG), sRGBToLinear(intB)];
 };
 
-const decodeAC = (value: number, maximumValue: number) => {
+const decodeAC = (value, maximumValue) => {
   const quantR = Math.floor(value / (19 * 19));
   const quantG = Math.floor(value / 19) % 19;
   const quantB = value % 19;
@@ -59,12 +57,7 @@ const decodeAC = (value: number, maximumValue: number) => {
   return rgb;
 };
 
-const decode = (
-  blurhash: string,
-  width: number,
-  height: number,
-  punch?: number
-) => {
+const decode = (blurhash, width, height, punch) => {
   validateBlurhash(blurhash);
 
   punch = punch | 1;

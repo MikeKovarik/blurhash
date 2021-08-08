@@ -1,4 +1,4 @@
-export const sRGBToLinear = (value: number) => {
+export const sRGBToLinear = (value) => {
   let v = value / 255;
   if (v <= 0.04045) {
     return v / 12.92;
@@ -7,7 +7,7 @@ export const sRGBToLinear = (value: number) => {
   }
 };
 
-export const linearTosRGB = (value: number) => {
+export const linearTosRGB = (value) => {
   let v = Math.max(0, Math.min(1, value));
   if (v <= 0.0031308) {
     return Math.round(v * 12.92 * 255 + 0.5);
@@ -16,7 +16,7 @@ export const linearTosRGB = (value: number) => {
   }
 };
 
-export const sign = (n: number) => (n < 0 ? -1 : 1);
+export const sign = (n) => (n < 0 ? -1 : 1);
 
-export const signPow = (val: number, exp: number) =>
+export const signPow = (val, exp) =>
   sign(val) * Math.pow(Math.abs(val), exp);
